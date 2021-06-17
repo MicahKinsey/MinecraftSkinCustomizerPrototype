@@ -1,0 +1,94 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Canvas tutorial</title>
+    <script type="text/javascript">
+      function draw() {
+        var download = document.getElementById('download');
+
+        var canvas = document.getElementById('tutorial');
+        var ctx = canvas.getContext('2d');
+        var image = document.getElementById('image');
+        var imgctx = image.getContext('2d');
+        var img = new Image();
+        img.src = 'steve.png'  + '?' + new Date().getTime();;
+        img.setAttribute('crossOrigin', 'Anonymous');
+        img.onload = () =>  {
+            imgctx.drawImage(img, 0, 0);
+            var imgData = imgctx.getImageData(0, 0, 64, 64);
+            //console.log(imgData);
+            console.log(imgData);
+            pixX = 0; pixY = -1;
+            for(var pixel = 0; pixel < 4096; pixel++) {
+              if(pixel % 64 == 0) {
+                pixY++;
+                pixX = 0;
+              }
+              pixColor = 'rgb(' + imgData.data[pixel * 4] + ',' + imgData.data[(pixel * 4) + 1] + ',' + imgData.data[(pixel * 4) + 2] + ')';
+              if(pixColor == 'rgb(0,0,0)') {
+                ctx.fillStyle = 'transparent';
+              }
+              else {
+                ctx.fillStyle = pixColor;
+              }
+              //console.log('filling pixel: ' + pixX + pixY + pixColor);
+              ctx.fillRect(pixX, pixY, 1, 1);
+              pixX++;
+            }
+            download.download = "image.png";
+            canvas.toBlob(function(blob){
+              download.href = URL.createObjectURL(blob);
+            },'image/png', 1.00);
+        }
+
+      }
+      function adjustSkin(imgUrl) {
+        var download = document.getElementById('download');
+
+        var canvas = document.getElementById('tutorial');
+        var ctx = canvas.getContext('2d');
+        var image = document.getElementById('image');
+        var imgctx = image.getContext('2d');
+        var img = new Image();
+            img.src = imgUrl  + '?' + new Date().getTime();;
+            img.setAttribute('crossOrigin', 'Anonymous');
+            img.onload = () =>  {
+            imgctx.drawImage(img, 0, 0);
+            var imgData = imgctx.getImageData(0, 0, 64, 64);
+            //console.log(imgData);
+            console.log(imgData);
+            pixX = 0; pixY = -1;
+            for(var pixel = 0; pixel < 4096; pixel++) {
+              if(pixel % 64 == 0) {
+                pixY++;
+                pixX = 0;
+              }
+              pixColor = 'rgb(' + imgData.data[pixel * 4] + ',' + imgData.data[(pixel * 4) + 1] + ',' + imgData.data[(pixel * 4) + 2] + ')';
+              if(pixColor == 'rgb(0,0,0)') {
+                ctx.fillStyle = 'transparent';
+              }
+              else {
+                ctx.fillStyle = pixColor;
+              }
+              //console.log('filling pixel: ' + pixX + pixY + pixColor);
+              ctx.fillRect(pixX, pixY, 1, 1);
+              pixX++;
+            }
+            download.download = "image.png";
+            canvas.toBlob(function(blob){
+              download.href = URL.createObjectURL(blob);
+            },'image/png', 1.00);
+          }
+      }
+    </script>
+<!--     <style type="text/css">
+      canvas { border: 1px solid black; }
+    </style> -->
+  </head>
+  <body onload="draw();">
+    <canvas id="image" width="64" height="64"></canvas>
+    <canvas id="tutorial" width="64" height="64"></canvas>
+    <button onclick="adjustSkin('lab_coat.png')">Put A Coat On!</button>
+    <a id="download">Download Me</a>
+  </body>
+</html>
